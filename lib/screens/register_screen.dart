@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fittrack/screens/login_screen.dart';
 import 'package:fittrack/utils/ErrorDialog.dart';
+import 'package:fittrack/utils/FirebaseUtil.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -27,24 +27,6 @@ class RegisterScreen extends StatelessWidget {
           context, MaterialPageRoute(builder: (context) => LoginScreen()));
     }
 
-    Future<void> addUserToFirestore(
-      String id,
-      String firstName,
-      String lastName,
-      String email,
-    ) async {
-      try {
-        await FirebaseFirestore.instance.collection('users').doc(id).set({
-          'firstName': firstName,
-          'lastName': lastName,
-          'email': email,
-          'role': "USER",
-        });
-      } catch (e) {
-        throw Exception("Error adding user to Firestore: $e");
-      }
-    }
-
     Future<void> registerUser(String email, String password,
         String confirmPassword, String firstName, String lastName) async {
       if (!isValidEmail(email)) {
@@ -60,7 +42,8 @@ class RegisterScreen extends StatelessWidget {
 
         User? user = userCredential.user;
         if (user != null) {
-          await addUserToFirestore(user.uid, firstName, lastName, email);
+          await FirebaseUtil.addUserToFirestore(
+              user.uid, firstName, lastName, email);
           navigateToLogin();
         }
       } catch (e) {

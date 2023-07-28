@@ -7,10 +7,6 @@ class ExerciseDetailsScreen extends StatelessWidget {
 
   const ExerciseDetailsScreen({super.key, required this.exercise});
 
-  Future<void> _delayedGifLoad() async {
-    await Future.delayed(const Duration(milliseconds: 1500));
-  }
-
   Image _buildExerciseImage(String gif) {
     if (gif.isNotEmpty) {
       return Image.network(
@@ -45,21 +41,7 @@ class ExerciseDetailsScreen extends StatelessWidget {
                     const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
               Text(exercise.description, style: const TextStyle(fontSize: 16)),
-              //_buildExerciseImage(exercise.gif),
-              FutureBuilder<void>(
-                future: _delayedGifLoad(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox(
-                      height: 400,
-                      width: 400,
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  } else {
-                    return _buildExerciseImage(exercise.gif);
-                  }
-                },
-              ),
+              _buildExerciseImage(exercise.gif),
               RichText(
                 text: TextSpan(
                   children: [

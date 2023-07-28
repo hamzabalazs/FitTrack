@@ -4,6 +4,7 @@ import 'package:fittrack/models/Exercise.dart';
 import 'package:fittrack/models/Workload.dart';
 import 'package:fittrack/models/Workout.dart';
 import 'package:fittrack/utils/ErrorDialog.dart';
+import 'package:fittrack/utils/FirebaseUtil.dart';
 import 'package:fittrack/widgets/WorkloadItem.dart';
 import 'package:flutter/material.dart';
 
@@ -23,24 +24,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   List<WorkloadItem> workloadItems = [];
 
   Future<void> _fetchExercises() async {
-    print("enter");
     try {
-      final QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('exercises').get();
-
-      final List<Exercise> fetchedExercises = querySnapshot.docs.map((doc) {
-        return Exercise(
-          id: doc.id,
-          name: doc['name'] as String,
-          description: doc['description'] as String,
-          gif: doc['gif'] as String,
-          difficulty: ExerciseDifficulty.values.firstWhere(
-            (diff) =>
-                diff.toString() == 'ExerciseDifficulty.${doc['difficulty']}',
-            orElse: () => ExerciseDifficulty.Easy,
-          ),
-        );
-      }).toList();
+      List<Exercise> fetchedExercises = await FirebaseUtil.fetchExercises();
       setState(() {
         _exercises = fetchedExercises;
       });
