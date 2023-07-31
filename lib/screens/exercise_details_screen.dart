@@ -17,8 +17,8 @@ class ExerciseDetailsScreen extends StatelessWidget {
       await precacheImage(image.image, context);
       return image;
     } else {
-      return Image.network(
-        'https://firebasestorage.googleapis.com/v0/b/fittrack-5c86e.appspot.com/o/default-pic.png?alt=media&token=45f6fd9d-0b7e-4720-9895-45de4d5c5137',
+      return Image.asset(
+        'assets/images/default-pic.png',
         height: 400,
         width: 400,
       );
