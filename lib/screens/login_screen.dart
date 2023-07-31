@@ -5,19 +5,38 @@ import 'package:flutter/material.dart';
 
 import '../utils/ErrorDialog.dart';
 
-class LoginScreen extends StatelessWidget {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    void navigateToMain() {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
-    }
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+
+  final TextEditingController _passwordController = TextEditingController();
+
+  Stream<User?>? _authStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _authStream = FirebaseAuth.instance.authStateChanges();
+    _authStream!.listen((user) {
+      if (user != null) {
+        navigateToMain();
+      }
+    });
+  }
+
+  void navigateToMain() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     void login(String email, String password) async {
       try {
         UserCredential userCredential = await FirebaseAuth.instance
