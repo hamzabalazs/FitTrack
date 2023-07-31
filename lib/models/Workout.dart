@@ -29,4 +29,4 @@ class Workout {
 }
 
 // ignore: constant_identifier_names
-enum WorkoutType { Push, Pull, Legs }
+enum WorkoutType { Push, Pull, Legs, Other }

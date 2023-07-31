@@ -24,4 +24,17 @@ class Workload {
         sets.map((set) => set.toMap()).toList();
     return {'exerciseId': exerciseId, 'sets': setsData};
   }
+
+  factory Workload.fromMap(Map<String, dynamic> map) {
+    final exerciseId = map['exerciseId'] as String;
+    final List<dynamic> setsData = map['sets'] as List<dynamic>;
+
+    final List<ExerciseSet> sets = setsData.map((setData) {
+      final reps = setData['reps'] as int;
+      final weight = setData['weight'] as int;
+      return ExerciseSet(reps: reps, weight: weight);
+    }).toList();
+
+    return Workload(exerciseId: exerciseId, sets: sets);
+  }
 }
