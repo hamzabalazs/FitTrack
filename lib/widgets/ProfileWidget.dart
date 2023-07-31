@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fittrack/models/UserProfile.dart';
+import 'package:fittrack/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfileWidget extends StatefulWidget {
@@ -48,6 +49,13 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     }
   }
 
+  void logOut() async {
+    await FirebaseAuth.instance.signOut();
+    if (!mounted) return;
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LoginScreen()));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -91,6 +99,13 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                 style: const TextStyle(fontSize: 20),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 32.0, 8.0, 0.0),
+              child: ElevatedButton(
+                onPressed: logOut,
+                child: const Text('Logout'),
+              ),
+            )
           ],
         ),
       ),
