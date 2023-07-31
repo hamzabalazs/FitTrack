@@ -134,7 +134,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         });
       });
     } else {
-      print("gothere");
       setState(() {
         firstWorkout = null;
         secondWorkout = null;
@@ -259,43 +258,67 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         child: Column(children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DropdownButton<Timestamp>(
-                        value: selectedFirstDropdownValue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedFirstDropdownValue = value;
-                            selectedSecondDropdownValue = null;
-                            setWorkoutsData();
-                          });
-                        },
-                        items: _buildFirstDropdownItems(),
-                      ),
-                    ],
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.0),
+                  child: Text(
+                    "Choose a workout",
+                    style: TextStyle(fontSize: 24.0),
                   ),
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      DropdownButton<Timestamp>(
-                        value: selectedSecondDropdownValue,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedSecondDropdownValue = value;
-                            setWorkoutsData();
-                          });
-                        },
-                        items: _buildSecondDropdownItems(),
+                const Text(
+                  "Find out how much better you did",
+                  style: TextStyle(fontSize: 16.0),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 161,
+                            height: 40,
+                            child: DropdownButton<Timestamp>(
+                              value: selectedFirstDropdownValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedFirstDropdownValue = value;
+                                  selectedSecondDropdownValue = null;
+                                  setWorkoutsData();
+                                });
+                              },
+                              items: _buildFirstDropdownItems(),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: 161,
+                            height: 40,
+                            child: DropdownButton<Timestamp>(
+                              value: selectedSecondDropdownValue,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedSecondDropdownValue = value;
+                                  setWorkoutsData();
+                                });
+                              },
+                              items: _buildSecondDropdownItems(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

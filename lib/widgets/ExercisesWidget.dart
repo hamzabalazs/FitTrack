@@ -41,8 +41,10 @@ class _ExercisesWidgetState extends State<ExercisesWidget> {
 
   Future<void> _fetchExercises() async {
     try {
-      final QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('exercises').get();
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('exercises')
+          .orderBy('name')
+          .get();
 
       final List<Exercise> fetchedExercises = querySnapshot.docs.map((doc) {
         return Exercise(

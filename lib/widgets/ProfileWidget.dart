@@ -63,21 +63,33 @@ class _ProfileWidgetState extends State<ProfileWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Name: ${currentUser?.firstName ?? ''} ${currentUser?.lastName ?? ''}',
-              style: const TextStyle(fontSize: 18),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Name: ${currentUser?.firstName ?? ''} ${currentUser?.lastName ?? ''}',
+                style: const TextStyle(fontSize: 20),
+              ),
             ),
-            Text(
-              'Email: ${currentUser?.email ?? ''}',
-              style: const TextStyle(fontSize: 18),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Email: ${currentUser?.email ?? ''}',
+                style: const TextStyle(fontSize: 20),
+              ),
             ),
-            Text(
-              'Number of Workouts: $numberOfWorkouts',
-              style: const TextStyle(fontSize: 18),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Number of Workouts: $numberOfWorkouts',
+                style: const TextStyle(fontSize: 20),
+              ),
             ),
-            Text(
-              'Role: ${currentUser?.role ?? ''}',
-              style: const TextStyle(fontSize: 18),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Role: ${currentUser?.role ?? ''}',
+                style: const TextStyle(fontSize: 20),
+              ),
             ),
           ],
         ),
