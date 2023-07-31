@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fittrack/models/Exercise.dart';
+import 'package:fittrack/models/Workload.dart';
+import 'package:fittrack/models/Workout.dart';
 
 class FirebaseUtil {
   static Future<void> addUserToFirestore(
@@ -22,8 +25,10 @@ class FirebaseUtil {
 
   static Future<List<Exercise>> fetchExercises() async {
     try {
-      final QuerySnapshot querySnapshot =
-          await FirebaseFirestore.instance.collection('exercises').get();
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('exercises')
+          .orderBy('name', descending: false)
+          .get();
 
       final List<Exercise> fetchedExercises = querySnapshot.docs.map((doc) {
         return Exercise(
@@ -41,6 +46,57 @@ class FirebaseUtil {
       return fetchedExercises;
     } catch (e) {
       throw Exception("Failed getting exercise data");
+    }
+  }
+
+  static Future<List<Workout>> fetchUserWorkouts() async {
+    try {
+      String uid = FirebaseAuth.instance.currentUser?.uid ?? "";
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('workouts')
+          .where('userId', isEqualTo: uid)
+          .orderBy('date', descending: true)
+          .get();
+      final List<Workout> fetchedWorkouts = querySnapshot.docs.map((doc) {
+        final List<dynamic> workloadsData = doc['workloads'] as List<dynamic>;
+        final List<Workload> workloads = workloadsData.map((map) {
+          return Workload.fromMap(map as Map<String, dynamic>);
+        }).toList();
+        return Workout(
+            id: doc.id,
+            userId: doc['userId'] as String,
+            type: WorkoutType.values.firstWhere(
+                (element) => element.toString() == 'WorkoutType.${doc['type']}',
+                orElse: () => WorkoutType.Other),
+            workloads: workloads,
+            date: doc['date']);
+      }).toList();
+      return fetchedWorkouts;
+    } catch (e) {
+      throw Exception('Failed to fetch user workouts!');
+    }
+  }
+
+  static Future<Workout?> fetchWorkoutData(Timestamp selectedDate) async {
+    try {
+      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('workouts')
+          .where('date', isEqualTo: selectedDate)
+          .limit(1)
+          .get();
+      if (querySnapshot.docs.isEmpty) return null;
+      QueryDocumentSnapshot doc = querySnapshot.docs[0];
+      final Workout fetchedWorkout = Workout(
+          id: doc.id,
+          userId: doc['userId'] as String,
+          type: WorkoutType.values.firstWhere(
+              (element) => element.toString() == 'WorkoutType.${doc['type']}',
+              orElse: () => WorkoutType.Other),
+          workloads: doc['workloads'] as List<Workload>,
+          date: doc['date']);
+      return fetchedWorkout;
+    } catch (e) {
+      throw Exception("Error fetching workout data");
     }
   }
 
