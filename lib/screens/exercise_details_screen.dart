@@ -7,13 +7,15 @@ class ExerciseDetailsScreen extends StatelessWidget {
 
   const ExerciseDetailsScreen({super.key, required this.exercise});
 
-  Image _buildExerciseImage(String gif) {
+  Future<Image> _buildExerciseImage(String gif, BuildContext context) async {
     if (gif.isNotEmpty) {
-      return Image.network(
+      final image = Image.network(
         gif,
         height: 400,
         width: 400,
       );
+      await precacheImage(image.image, context);
+      return image;
     } else {
       return Image.network(
         'https://firebasestorage.googleapis.com/v0/b/fittrack-5c86e.appspot.com/o/default-pic.png?alt=media&token=45f6fd9d-0b7e-4720-9895-45de4d5c5137',
@@ -41,7 +43,22 @@ class ExerciseDetailsScreen extends StatelessWidget {
                     const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
               Text(exercise.description, style: const TextStyle(fontSize: 16)),
-              _buildExerciseImage(exercise.gif),
+              FutureBuilder<Image>(
+                future: _buildExerciseImage(exercise.gif, context),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox(
+                      height: 400,
+                      width: 400,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Text('Error loading image!');
+                  } else {
+                    return snapshot.data!;
+                  }
+                },
+              ),
               RichText(
                 text: TextSpan(
                   children: [
