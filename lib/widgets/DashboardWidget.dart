@@ -141,6 +141,24 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     }
   }
 
+  Text percentageText(Workload firstWorkload, Workload secondWorkload) {
+    if (firstWorkload.exerciseId == secondWorkload.exerciseId) {
+      return Text(
+        "${getPercentage(firstWorkload, secondWorkload)}%",
+        style: TextStyle(
+            fontSize: 16,
+            color: getPercentage(firstWorkload, secondWorkload) < 0.0
+                ? Colors.red
+                : Colors.green),
+      );
+    } else {
+      return const Text(
+        "-.-%",
+        style: TextStyle(color: Colors.grey, fontSize: 18),
+      );
+    }
+  }
+
   Widget _displayOneElement(Workload firstWorkload, Workload secondWorkload) {
     List<Widget> firstColumnData = firstWorkload.sets
         .map(
@@ -151,16 +169,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         )
         .toList();
     Widget secondColumnData = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Text(
-        "${getPercentage(firstWorkload, secondWorkload)}%",
-        style: TextStyle(
-            fontSize: 16,
-            color: getPercentage(firstWorkload, secondWorkload) < 0.0
-                ? Colors.red
-                : Colors.green),
-      ),
-    );
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: percentageText(firstWorkload, secondWorkload));
 
     List<Widget> thirdColumnData = secondWorkload.sets
         .map(
@@ -174,81 +184,126 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FutureBuilder(
-                future: FirebaseUtil.getExerciseName(
-                  firstWorkload.exerciseId,
-                  _exercises,
+          SizedBox(
+            width: 145,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FutureBuilder(
+                  future: FirebaseUtil.getExerciseName(
+                    firstWorkload.exerciseId,
+                    _exercises,
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SizedBox(
+                        height: MediaQuery.sizeOf(context).height,
+                        width: MediaQuery.sizeOf(context).width,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else {
+                      return Text(
+                        snapshot.data as String,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }
+                  },
                 ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return SizedBox(
-                      height: MediaQuery.sizeOf(context).height,
-                      width: MediaQuery.sizeOf(context).width,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  } else {
-                    return Text(
-                      snapshot.data as String,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              ...firstColumnData
-            ],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [secondColumnData],
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FutureBuilder(
-                future: FirebaseUtil.getExerciseName(
-                  secondWorkload.exerciseId,
-                  _exercises,
+                const SizedBox(
+                  height: 8,
                 ),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return SizedBox(
-                      height: MediaQuery.sizeOf(context).height,
-                      width: MediaQuery.sizeOf(context).width,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  } else {
-                    return Text(
-                      snapshot.data as String,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              ...thirdColumnData
-            ],
+                ...firstColumnData
+              ],
+            ),
+          ),
+          SizedBox(
+            width: 95,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [secondColumnData],
+            ),
+          ),
+          SizedBox(
+            width: 135,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FutureBuilder(
+                  future: FirebaseUtil.getExerciseName(
+                    secondWorkload.exerciseId,
+                    _exercises,
+                  ),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SizedBox(
+                        height: MediaQuery.sizeOf(context).height,
+                        width: MediaQuery.sizeOf(context).width,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    } else {
+                      return Text(
+                        snapshot.data as String,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                ...thirdColumnData
+              ],
+            ),
           ),
         ],
       ),
     );
+  }
+
+  List<Widget> _displayElements(Workout firstWorkout, Workout secondWorkout) {
+    List<Widget> displayWidgetList = [];
+
+    int firstLength = firstWorkout.workloads.length;
+    int secondLength = secondWorkout.workloads.length;
+
+    // Iterate over the first workout
+    for (int i = 0; i < firstLength; i++) {
+      if (i < secondLength) {
+        // If both workouts have an exercise at this index, calculate the percentage
+        displayWidgetList.add(
+          _displayOneElement(
+              firstWorkout.workloads[i], secondWorkout.workloads[i]),
+        );
+      } else {
+        // If the second workout doesn't have an exercise at this index, add the first workout's exercise without calculating the percentage
+        displayWidgetList.add(
+          _displayOneElement(
+              firstWorkout.workloads[i], Workload(exerciseId: "", sets: [])),
+        );
+      }
+    }
+
+    // If second workout has more exercises than the first workout, add the remaining exercises without calculating the percentage
+    if (secondLength > firstLength) {
+      for (int i = firstLength; i < secondLength; i++) {
+        displayWidgetList.add(
+          _displayOneElement(
+              Workload(exerciseId: "", sets: []), secondWorkout.workloads[i]),
+        );
+      }
+    }
+
+    return displayWidgetList;
   }
 
   @override
@@ -328,13 +383,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (firstWorkout != null && secondWorkout != null)
-                  for (int i = 0; i < firstWorkout!.workloads.length; i++)
-                    _displayOneElement(firstWorkout!.workloads[i],
-                        secondWorkout!.workloads[i]),
-                const SizedBox(
-                  height: 10.0,
-                )
+                if ((firstWorkout != null && secondWorkout != null))
+                  ..._displayElements(firstWorkout!, secondWorkout!)
               ],
             ),
           )
