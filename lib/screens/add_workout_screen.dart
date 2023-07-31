@@ -95,12 +95,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
-                // child: ListView.builder(
-                //   itemCount: workloadItems.length,
-                //   itemBuilder: (context, index) {
-                //     return workloadItems[index];
-                //   },
-                // ),
                 child: SingleChildScrollView(
               child: Column(
                 children: workloadItems
