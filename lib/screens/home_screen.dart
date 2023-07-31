@@ -13,6 +13,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  bool isNavigating = false;
 
   static const List<Widget> _pages = <Widget>[
     DashboardWidget(),
@@ -21,10 +22,20 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfileWidget(),
   ];
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
+    if (isNavigating) return;
     setState(() {
       _selectedIndex = index;
+      isNavigating = true;
     });
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    setState(
+      () {
+        isNavigating = false;
+      },
+    );
   }
 
   @override
