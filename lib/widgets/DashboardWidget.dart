@@ -102,8 +102,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     int secondWorkoutTotalWeight = calculateTotalWeight(secondWorkload.sets);
 
     double percentageChange =
-        ((secondWorkoutTotalWeight - firstWorkoutTotalWeight) /
-                firstWorkoutTotalWeight) *
+        ((firstWorkoutTotalWeight - secondWorkoutTotalWeight) /
+                secondWorkoutTotalWeight) *
             100;
     return percentageChange.roundToDouble();
   }
@@ -151,6 +151,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 ? Colors.red
                 : Colors.green),
       );
+    } else if (firstWorkload.exerciseId == "" ||
+        secondWorkload.exerciseId == "") {
+      return const Text("");
     } else {
       return const Text(
         "-.-%",
@@ -270,35 +273,65 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     );
   }
 
+  List<Workload> sortWorkload(
+      List<Workload> firstWorkloads, List<Workload> secondWorkloads) {
+    Set<String> commonExerciseIds = firstWorkloads
+        .map((workload) => workload.exerciseId)
+        .toSet()
+        .intersection(
+            secondWorkloads.map((workload) => workload.exerciseId).toSet());
+    if (commonExerciseIds.isEmpty) return secondWorkloads;
+    List<Workload> sortedSecondWorkload = [];
+
+    for (String exerciseId in commonExerciseIds) {
+      Workload? matchingWorkload = secondWorkloads.firstWhere(
+          (workload) => workload.exerciseId == exerciseId,
+          orElse: () => Workload(exerciseId: "", sets: []));
+      if (matchingWorkload.exerciseId != "") {
+        sortedSecondWorkload.add(matchingWorkload);
+      }
+    }
+
+    List<Workload> helperList = List<Workload>.from(secondWorkloads);
+    helperList
+        .removeWhere((workload) => sortedSecondWorkload.contains(workload));
+    for (var item in helperList) {
+      sortedSecondWorkload.add(item);
+    }
+    print(sortedSecondWorkload.length);
+    return sortedSecondWorkload;
+  }
+
   List<Widget> _displayElements(Workout firstWorkout, Workout secondWorkout) {
     List<Widget> displayWidgetList = [];
 
     int firstLength = firstWorkout.workloads.length;
     int secondLength = secondWorkout.workloads.length;
 
-    // Iterate over the first workout
+    List<Workload> secondWorkload =
+        sortWorkload(firstWorkout.workloads, secondWorkout.workloads);
+
+    List<Workload> firstWorkload =
+        sortWorkload(secondWorkload, firstWorkout.workloads);
+
     for (int i = 0; i < firstLength; i++) {
       if (i < secondLength) {
-        // If both workouts have an exercise at this index, calculate the percentage
         displayWidgetList.add(
-          _displayOneElement(
-              firstWorkout.workloads[i], secondWorkout.workloads[i]),
+          _displayOneElement(firstWorkload[i], secondWorkload[i]),
         );
       } else {
-        // If the second workout doesn't have an exercise at this index, add the first workout's exercise without calculating the percentage
         displayWidgetList.add(
           _displayOneElement(
-              firstWorkout.workloads[i], Workload(exerciseId: "", sets: [])),
+              firstWorkload[i], Workload(exerciseId: "", sets: [])),
         );
       }
     }
 
-    // If second workout has more exercises than the first workout, add the remaining exercises without calculating the percentage
     if (secondLength > firstLength) {
       for (int i = firstLength; i < secondLength; i++) {
         displayWidgetList.add(
           _displayOneElement(
-              Workload(exerciseId: "", sets: []), secondWorkout.workloads[i]),
+              Workload(exerciseId: "", sets: []), secondWorkload[i]),
         );
       }
     }
