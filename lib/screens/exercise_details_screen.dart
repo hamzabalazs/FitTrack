@@ -11,7 +11,7 @@ class ExerciseDetailsScreen extends StatelessWidget {
     if (gif.isNotEmpty) {
       final image = Image.network(
         gif,
-        height: 400,
+        height: MediaQuery.sizeOf(context).height / 2,
         width: 400,
       );
       await precacheImage(image.image, context);
@@ -47,10 +47,10 @@ class ExerciseDetailsScreen extends StatelessWidget {
                 future: _buildExerciseImage(exercise.gif, context),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox(
-                      height: 400,
+                    return SizedBox(
+                      height: MediaQuery.sizeOf(context).height / 2,
                       width: 400,
-                      child: Center(child: CircularProgressIndicator()),
+                      child: const Center(child: CircularProgressIndicator()),
                     );
                   } else if (snapshot.hasError) {
                     return const Text('Error loading image!');

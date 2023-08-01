@@ -188,9 +188,9 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       child: Row(
         children: [
           SizedBox(
-            width: 145,
+            width: MediaQuery.sizeOf(context).width / 3,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 FutureBuilder(
                   future: FirebaseUtil.getExerciseName(
@@ -225,16 +225,16 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             ),
           ),
           SizedBox(
-            width: 95,
+            width: MediaQuery.sizeOf(context).width / 4.5,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [secondColumnData],
             ),
           ),
           SizedBox(
-            width: 135,
+            width: MediaQuery.sizeOf(context).width / 3,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 FutureBuilder(
                   future: FirebaseUtil.getExerciseName(
@@ -368,7 +368,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            width: 161,
+                            width: 162,
                             height: 40,
                             child: DropdownButton<Timestamp>(
                               value: selectedFirstDropdownValue,
@@ -390,7 +390,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            width: 161,
+                            width: 162,
                             height: 40,
                             child: DropdownButton<Timestamp>(
                               value: selectedSecondDropdownValue,

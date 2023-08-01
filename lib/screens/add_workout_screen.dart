@@ -61,13 +61,27 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
     });
   }
 
-  Future<void> _addWorkout() async {
+  Future<bool> _addWorkout() async {
     try {
       List<Workload> workloads = [];
 
       for (var item in workloadItems) {
         Workload workloadData = item.workload;
+        if (workloadData.sets.isEmpty) {
+          ErrorDialog.showErrorDialog(context, "Exercise cannot have 0 sets!");
+          return false;
+        }
+        if (workloadData.exerciseId == "") {
+          ErrorDialog.showErrorDialog(context, "No exercise chosen!");
+          return false;
+        }
         workloads.add(workloadData);
+      }
+
+      if (workloads.isEmpty) {
+        ErrorDialog.showErrorDialog(
+            context, "Workout cannot have 0 exercises!");
+        return false;
       }
 
       final newWorkout = Workout(
@@ -80,8 +94,10 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
       await FirebaseFirestore.instance
           .collection('workouts')
           .add(newWorkout.toMap());
+      return true;
     } catch (e) {
       ErrorDialog.showErrorDialog(context, "Failed to add workout!");
+      return false;
     }
   }
 
@@ -137,10 +153,12 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                _addWorkout();
-                await widget.onWorkoutAdded();
-                if (!mounted) return;
-                Navigator.pop(context);
+                final isSuccess = await _addWorkout();
+                if (isSuccess) {
+                  await widget.onWorkoutAdded();
+                  if (!mounted) return;
+                  Navigator.pop(context);
+                }
               },
               child: const Text('Add Workout'),
             ),
