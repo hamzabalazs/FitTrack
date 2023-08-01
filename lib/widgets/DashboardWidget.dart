@@ -146,7 +146,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       return Text(
         "${getPercentage(firstWorkload, secondWorkload)}%",
         style: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             color: getPercentage(firstWorkload, secondWorkload) < 0.0
                 ? Colors.red
                 : Colors.green),
@@ -167,19 +167,17 @@ class _DashboardWidgetState extends State<DashboardWidget> {
         .map(
           (set) => Text(
             'Reps: ${set.reps}, Weight: ${set.weight}',
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 14),
           ),
         )
         .toList();
-    Widget secondColumnData = Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: percentageText(firstWorkload, secondWorkload));
+    Widget secondColumnData = percentageText(firstWorkload, secondWorkload);
 
     List<Widget> thirdColumnData = secondWorkload.sets
         .map(
           (set) => Text(
             'Reps: ${set.reps}, Weight: ${set.weight}',
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 14),
           ),
         )
         .toList();
@@ -188,7 +186,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       child: Row(
         children: [
           SizedBox(
-            width: MediaQuery.sizeOf(context).width / 3,
+            width: MediaQuery.sizeOf(context).width / 2.5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -225,14 +223,14 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             ),
           ),
           SizedBox(
-            width: MediaQuery.sizeOf(context).width / 4.5,
+            width: MediaQuery.sizeOf(context).width / 5.7,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [secondColumnData],
             ),
           ),
           SizedBox(
-            width: MediaQuery.sizeOf(context).width / 3,
+            width: MediaQuery.sizeOf(context).width / 2.5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -298,7 +296,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     for (var item in helperList) {
       sortedSecondWorkload.add(item);
     }
-    print(sortedSecondWorkload.length);
     return sortedSecondWorkload;
   }
 
@@ -368,7 +365,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            width: 162,
+                            width: MediaQuery.sizeOf(context).width / 2.2,
                             height: 40,
                             child: DropdownButton<Timestamp>(
                               value: selectedFirstDropdownValue,
@@ -390,7 +387,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            width: 162,
+                            width: MediaQuery.sizeOf(context).width / 2.2,
                             height: 40,
                             child: DropdownButton<Timestamp>(
                               value: selectedSecondDropdownValue,
@@ -412,7 +409,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
