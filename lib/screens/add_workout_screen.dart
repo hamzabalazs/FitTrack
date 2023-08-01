@@ -1,9 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fittrack/models/Exercise.dart';
 import 'package:fittrack/models/Workload.dart';
 import 'package:fittrack/models/Workout.dart';
-import 'package:fittrack/utils/ErrorDialog.dart';
 import 'package:fittrack/utils/FirebaseUtil.dart';
 import 'package:fittrack/widgets/WorkloadItem.dart';
 import 'package:flutter/material.dart';
@@ -61,46 +59,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
     });
   }
 
-  Future<bool> _addWorkout() async {
-    try {
-      List<Workload> workloads = [];
-
-      for (var item in workloadItems) {
-        Workload workloadData = item.workload;
-        if (workloadData.sets.isEmpty) {
-          ErrorDialog.showErrorDialog(context, "Exercise cannot have 0 sets!");
-          return false;
-        }
-        if (workloadData.exerciseId == "") {
-          ErrorDialog.showErrorDialog(context, "No exercise chosen!");
-          return false;
-        }
-        workloads.add(workloadData);
-      }
-
-      if (workloads.isEmpty) {
-        ErrorDialog.showErrorDialog(
-            context, "Workout cannot have 0 exercises!");
-        return false;
-      }
-
-      final newWorkout = Workout(
-          id: "placeholder",
-          date: Timestamp.now(),
-          type: selectedType,
-          userId: currentUser?.uid ?? "",
-          workloads: workloads);
-
-      await FirebaseFirestore.instance
-          .collection('workouts')
-          .add(newWorkout.toMap());
-      return true;
-    } catch (e) {
-      ErrorDialog.showErrorDialog(context, "Failed to add workout!");
-      return false;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -153,7 +111,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
             ),
             ElevatedButton(
               onPressed: () async {
-                final isSuccess = await _addWorkout();
+                final isSuccess = await FirebaseUtil.addWorkout(
+                    workloadItems, selectedType, currentUser?.uid, context);
                 if (isSuccess) {
                   await widget.onWorkoutAdded();
                   if (!mounted) return;

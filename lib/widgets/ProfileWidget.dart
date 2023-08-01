@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fittrack/models/UserProfile.dart';
 import 'package:fittrack/screens/login_screen.dart';
+import 'package:fittrack/utils/FirebaseUtil.dart';
 import 'package:flutter/material.dart';
 
 class ProfileWidget extends StatefulWidget {
@@ -17,17 +17,11 @@ class _ProfileWidgetState extends State<ProfileWidget> {
 
   Future<void> _getUser() async {
     try {
-      DocumentSnapshot documentSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser?.uid)
-          .get();
-      if (documentSnapshot.exists) {
+      UserProfile? user = await FirebaseUtil.getUser(
+          FirebaseAuth.instance.currentUser?.uid ?? "");
+      if (user != null) {
         setState(() {
-          currentUser = UserProfile(
-              email: documentSnapshot['email'],
-              firstName: documentSnapshot['firstName'],
-              lastName: documentSnapshot['lastName'],
-              role: documentSnapshot['role']);
+          currentUser = user;
         });
       }
     } catch (e) {
@@ -37,12 +31,10 @@ class _ProfileWidgetState extends State<ProfileWidget> {
 
   Future<void> _getNumberOfWorkouts() async {
     try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('workouts')
-          .where("userId", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-          .get();
+      int workoutsNum = await FirebaseUtil.getNumberOfWorkouts(
+          FirebaseAuth.instance.currentUser?.uid ?? "");
       setState(() {
-        numberOfWorkouts = querySnapshot.docs.length;
+        numberOfWorkouts = workoutsNum;
       });
     } catch (e) {
       throw Exception("Failed to fetch number of workouts");

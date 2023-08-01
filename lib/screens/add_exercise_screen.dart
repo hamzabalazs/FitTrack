@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fittrack/models/Exercise.dart';
+import 'package:fittrack/utils/FirebaseUtil.dart';
 import 'package:flutter/material.dart';
 
 class AddExerciseScreen extends StatefulWidget {
@@ -19,20 +19,6 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
   final TextEditingController _gifUrlController = TextEditingController();
 
   ExerciseDifficulty selectedDifficulty = ExerciseDifficulty.Easy;
-
-  Future<void> _addExercise() async {
-    final newExercise = Exercise(
-      id: "placeholder",
-      name: _nameController.text,
-      description: _descriptionController.text,
-      gif: _gifUrlController.text,
-      difficulty: selectedDifficulty,
-    );
-
-    await FirebaseFirestore.instance
-        .collection('exercises')
-        .add(newExercise.toMap());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +63,11 @@ class _AddExerciseScreenState extends State<AddExerciseScreen> {
               const SizedBox(height: 2),
               ElevatedButton(
                   onPressed: () async {
-                    _addExercise();
+                    await FirebaseUtil.addExercise(
+                        _nameController.text,
+                        _descriptionController.text,
+                        _gifUrlController.text,
+                        selectedDifficulty);
                     await widget.onExerciseAdded();
                     if (!mounted) return;
                     Navigator.pop(context);
