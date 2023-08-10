@@ -31,7 +31,7 @@ class Workload {
 
     final List<ExerciseSet> sets = setsData.map((setData) {
       final reps = setData['reps'] as int;
-      final weight = setData['weight'] as int;
+      final weight = setData['weight'] as double;
       return ExerciseSet(reps: reps, weight: weight);
     }).toList();
 

@@ -1,6 +1,6 @@
 class ExerciseSet {
   final int reps;
-  final int weight;
+  final double weight;
 
   ExerciseSet({
     required this.reps,
@@ -9,7 +9,7 @@ class ExerciseSet {
 
   ExerciseSet copyWith({
     int? reps,
-    int? weight,
+    double? weight,
   }) {
     return ExerciseSet(
       reps: reps ?? this.reps,

@@ -51,8 +51,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     _fetchExercises();
   }
 
-  int calculateTotalWeight(List<ExerciseSet> sets) {
-    int totalWeight = 0;
+  double calculateTotalWeight(List<ExerciseSet> sets) {
+    double totalWeight = 0;
     for (ExerciseSet set in sets) {
       totalWeight += set.reps * set.weight;
     }
@@ -98,12 +98,13 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   }
 
   double getPercentage(Workload firstWorkload, Workload secondWorkload) {
-    int firstWorkoutTotalWeight = calculateTotalWeight(firstWorkload.sets);
-    int secondWorkoutTotalWeight = calculateTotalWeight(secondWorkload.sets);
+    double firstWorkloadTotalWeight = calculateTotalWeight(firstWorkload.sets);
+    double secondWorkloadTotalWeight =
+        calculateTotalWeight(secondWorkload.sets);
 
     double percentageChange =
-        ((firstWorkoutTotalWeight - secondWorkoutTotalWeight) /
-                secondWorkoutTotalWeight) *
+        ((firstWorkloadTotalWeight - secondWorkloadTotalWeight) /
+                secondWorkloadTotalWeight) *
             100;
     return percentageChange.roundToDouble();
   }

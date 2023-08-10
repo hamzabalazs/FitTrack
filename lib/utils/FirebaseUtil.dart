@@ -183,8 +183,8 @@ class FirebaseUtil {
               (workloadData['sets'] as List).cast<Map<String, dynamic>>();
 
           List<ExerciseSet> sets = setsData.map((setData) {
-            int reps = setData['reps'] as int;
-            int weight = setData['weight'] as int;
+            final reps = setData['reps'] as int;
+            final weight = setData['weight'] as double;
             return ExerciseSet(reps: reps, weight: weight);
           }).toList();
 
