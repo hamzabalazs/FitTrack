@@ -59,6 +59,12 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
     });
   }
 
+  void _removeWorkloadItem(int index) {
+    setState(() {
+      workloadItems.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,13 +76,18 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
           children: [
             Expanded(
                 child: SingleChildScrollView(
-              child: Column(
-                children: workloadItems
-                    .map((workloadItem) => Container(
-                          child: workloadItem,
-                        ))
-                    .toList(),
-              ),
+              child: Column(children: [
+                for (var index = 0; index < workloadItems.length; index++)
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove_circle),
+                        onPressed: () => _removeWorkloadItem(index),
+                      ),
+                      Expanded(child: workloadItems[index]),
+                    ],
+                  ),
+              ]),
             )),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

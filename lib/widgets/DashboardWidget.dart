@@ -97,6 +97,28 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     return dropdownItems;
   }
 
+  Text getPercentageTextForWholeWorkout(
+      List<Workload> firstWorkloads, List<Workload> secondWorkloads) {
+    double firstWorkoutTotalWeight = 0.0;
+    double secondWorkoutTotalWeight = 0.0;
+    for (var workload in firstWorkloads) {
+      firstWorkoutTotalWeight += calculateTotalWeight(workload.sets);
+    }
+    for (var workload in secondWorkloads) {
+      secondWorkoutTotalWeight += calculateTotalWeight(workload.sets);
+    }
+
+    double percentage = ((firstWorkoutTotalWeight - secondWorkoutTotalWeight) /
+            secondWorkoutTotalWeight) *
+        100;
+
+    return Text(
+      "Overall performance: ${percentage.roundToDouble()}%",
+      style: TextStyle(
+          fontSize: 14, color: percentage < 0.0 ? Colors.red : Colors.green),
+    );
+  }
+
   double getPercentage(Workload firstWorkload, Workload secondWorkload) {
     double firstWorkloadTotalWeight = calculateTotalWeight(firstWorkload.sets);
     double secondWorkloadTotalWeight =
@@ -341,85 +363,93 @@ class _DashboardWidgetState extends State<DashboardWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 4.0),
-                  child: Text(
-                    "Choose a workout",
-                    style: TextStyle(fontSize: 24.0),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4.0),
+                    child: Text(
+                      "Choose a workout",
+                      style: TextStyle(fontSize: 24.0),
+                    ),
                   ),
-                ),
-                const Text(
-                  "Find out how much better you did",
-                  style: TextStyle(fontSize: 16.0),
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.sizeOf(context).width / 2.2,
-                            height: 40,
-                            child: DropdownButton<Timestamp>(
-                              value: selectedFirstDropdownValue,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedFirstDropdownValue = value;
-                                  selectedSecondDropdownValue = null;
-                                  setWorkoutsData();
-                                });
-                              },
-                              items: _buildFirstDropdownItems(),
+                  const Text(
+                    "Find out how much better you did",
+                    style: TextStyle(fontSize: 16.0),
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.sizeOf(context).width / 2.2,
+                              height: 40,
+                              child: DropdownButton<Timestamp>(
+                                value: selectedFirstDropdownValue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedFirstDropdownValue = value;
+                                    selectedSecondDropdownValue = null;
+                                    setWorkoutsData();
+                                  });
+                                },
+                                items: _buildFirstDropdownItems(),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.sizeOf(context).width / 2.2,
-                            height: 40,
-                            child: DropdownButton<Timestamp>(
-                              value: selectedSecondDropdownValue,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedSecondDropdownValue = value;
-                                  setWorkoutsData();
-                                });
-                              },
-                              items: _buildSecondDropdownItems(),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.sizeOf(context).width / 2.2,
+                              height: 40,
+                              child: DropdownButton<Timestamp>(
+                                value: selectedSecondDropdownValue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    selectedSecondDropdownValue = value;
+                                    setWorkoutsData();
+                                  });
+                                },
+                                items: _buildSecondDropdownItems(),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if ((firstWorkout != null && secondWorkout != null))
-                  ..._displayElements(firstWorkout!, secondWorkout!)
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if ((firstWorkout != null && secondWorkout != null))
+                    ..._displayElements(firstWorkout!, secondWorkout!)
+                ],
+              ),
             ),
-          )
-        ]),
+            if (firstWorkout != null && secondWorkout != null)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: getPercentageTextForWholeWorkout(
+                    firstWorkout!.workloads, secondWorkout!.workloads),
+              )
+          ],
+        ),
       ),
     );
   }
