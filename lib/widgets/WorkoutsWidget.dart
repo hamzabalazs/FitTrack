@@ -40,7 +40,8 @@ class _WorkoutsWidgetState extends State<WorkoutsWidget> {
         itemCount: _workouts.length,
         itemBuilder: (context, index) {
           final workout = _workouts[index];
-          return WorkoutListItem(workout: workout);
+          return WorkoutListItem(
+              workout: workout, onWorkoutChanged: _fetchUserWorkouts);
         },
       ),
       floatingActionButton: FloatingActionButton(

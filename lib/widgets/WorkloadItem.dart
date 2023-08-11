@@ -26,8 +26,8 @@ class WorkloadItem extends StatefulWidget {
 class _WorkloadItemState extends State<WorkloadItem> {
   String? selectedExerciseId;
   List<ExerciseSet> sets = [];
-  List<TextEditingController> _repsControllers = [];
-  List<TextEditingController> _weightControllers = [];
+  final List<TextEditingController> _repsControllers = [];
+  final List<TextEditingController> _weightControllers = [];
 
   void _updateWorkload() {
     Workload updatedWorkload =

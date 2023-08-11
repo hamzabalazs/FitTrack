@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 
 class WorkoutListItem extends StatelessWidget {
   final Workout workout;
+  final Future<void> Function() onWorkoutChanged;
 
-  const WorkoutListItem({super.key, required this.workout});
+  const WorkoutListItem(
+      {super.key, required this.workout, required this.onWorkoutChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,8 @@ class WorkoutListItem extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => WorkoutDetailsScreen(workout: workout),
+              builder: (context) => WorkoutDetailsScreen(
+                  workout: workout, onWorkoutChanged: onWorkoutChanged),
             ),
           );
         },

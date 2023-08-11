@@ -1,13 +1,16 @@
 import 'package:fittrack/models/Exercise.dart';
 import 'package:fittrack/models/Workout.dart';
+import 'package:fittrack/screens/edit_workout_screen.dart';
 import 'package:fittrack/utils/FirebaseUtil.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class WorkoutDetailsScreen extends StatefulWidget {
   final Workout workout;
+  final Future<void> Function() onWorkoutChanged;
 
-  const WorkoutDetailsScreen({super.key, required this.workout});
+  const WorkoutDetailsScreen(
+      {super.key, required this.workout, required this.onWorkoutChanged});
 
   @override
   State<WorkoutDetailsScreen> createState() => _WorkoutDetailsScreenState();
@@ -32,6 +35,46 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
     super.initState();
     Future.delayed(const Duration(milliseconds: 500))
         .then((_) => _fetchExercises());
+  }
+
+  void _editWorkout() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => EditWorkoutScreen(
+                exercises: _exercises,
+                workout: widget.workout,
+                onWorkoutChanged: widget.onWorkoutChanged)));
+  }
+
+  void _deleteWorkout() async {
+    bool confirmDelete = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Delete'),
+        content: const Text('Are you sure you want to delete this workout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmDelete == true) {
+      final isSuccess = await FirebaseUtil.deleteWorkout(widget.workout.id);
+      if (isSuccess) {
+        await widget.onWorkoutChanged();
+        if (mounted) {
+          Navigator.pop(context, true);
+        }
+      }
+    }
   }
 
   @override
@@ -123,7 +166,24 @@ class _WorkoutDetailsScreenState extends State<WorkoutDetailsScreen> {
                         ),
                       const SizedBox(height: 16),
                     ],
-                  )
+                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _editWorkout,
+                        child: const Text('Edit'),
+                      ),
+                      const SizedBox(width: 20),
+                      ElevatedButton(
+                        onPressed: _deleteWorkout,
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

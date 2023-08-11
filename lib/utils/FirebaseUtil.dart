@@ -263,4 +263,61 @@ class FirebaseUtil {
       return false;
     }
   }
+
+  static Future<bool> deleteWorkout(String workoutId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('workouts')
+          .doc(workoutId)
+          .delete();
+      return true;
+    } catch (e) {
+      throw Exception('Failed to delete workout: $e');
+    }
+  }
+
+  static Future<bool> editWorkout(
+      Workout workout,
+      List<WorkloadItem> workloadItems,
+      WorkoutType selectedType,
+      BuildContext context) async {
+    try {
+      List<Workload> workloads = [];
+
+      for (var item in workloadItems) {
+        Workload workloadData = item.workload;
+        if (workloadData.sets.isEmpty) {
+          ErrorDialog.showErrorDialog(context, "Exercise cannot have 0 sets!");
+          return false;
+        }
+        if (workloadData.exerciseId == "") {
+          ErrorDialog.showErrorDialog(context, "No exercise chosen!");
+          return false;
+        }
+        workloads.add(workloadData);
+      }
+
+      if (workloads.isEmpty) {
+        ErrorDialog.showErrorDialog(
+            context, "Workout cannot have 0 exercises!");
+        return false;
+      }
+
+      final newWorkout = Workout(
+          id: workout.id,
+          date: workout.date,
+          type: selectedType,
+          userId: workout.userId,
+          workloads: workloads);
+
+      await FirebaseFirestore.instance
+          .collection('workouts')
+          .doc(workout.id)
+          .update(newWorkout.toMap());
+      return true;
+    } catch (e) {
+      ErrorDialog.showErrorDialog(context, "Failed to add workout!");
+      return false;
+    }
+  }
 }
