@@ -1,16 +1,6 @@
-# fittrack
+# FitTrack
 
-A new Flutter project.
+This application was created as a side project for studying Flutter.
+It uses Firebase for storage, which makes it usable right from the get-go.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The application can be used to track workouts, and compare them to one another. Comparing uses Cross-multiplication of total weight moved to assess workout performance. Individual exercises are compared to one another, while overall performance is calculated as well. This project is done for now, but I might update it in the future depending if I can start using it regularly and need some more functionality, or I want to publish it on the app store.
